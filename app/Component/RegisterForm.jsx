@@ -63,7 +63,7 @@ const RegisterForm = () => {
                 <input onChange={(e) => {setEmail(e.target.value)}} type="text" placeholder='Email' />
                 <input onChange={(e) => {setPassword(e.target.value)}} type="password" placeholder='Password' />
                 <button className='bg-green-600 text-white
-                font-bold cursor-pointer px-6 py-2
+                font-bold cursor-pointer px-6 py-2 hover:bg-green-700 transition-all duration-400 rounded-lg
                 ' type='submit'>Register</button>
                 {
                     error &&(
@@ -71,7 +71,7 @@ const RegisterForm = () => {
                     )
                 }
                 <Link href='/' className='text-sm mt-3 text-right'>
-                    Already have an account? <span className='underline'>Login</span>
+                    Already have an account? <span className='underline text-green-600 font-medium'>Login</span>
                 </Link>
             </form>
         </div>

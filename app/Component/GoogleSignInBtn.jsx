@@ -4,9 +4,13 @@ import Image from 'next/image'
 import { signIn } from 'next-auth/react'
 const GoogleSignInBtn = () => {
   return (
-        <button onClick={() => signIn('google')} className='flex justify-center mt-4 shadow-lg p-2 wrap-normal w-fit mx-auto cursor-pointer'>
-            <Image src='/google-logo.png' width={40} height={40} alt='image'/>
-            <span className='my-auto mx-4'>Sign In With Google</span>
+        <button 
+            onClick={() =>{signIn('google')}}
+            className='flex items-center gap-4 shadow-xl rounded-lg pl-3 cursor-pointer 
+            mx-auto mt-4 transition-all duration-400 hover:scale-105
+            '>
+            <Image src='/google-logo.png' height={30} width={30} alt='image'/>
+            <span className='bg-blue-500 text-white px-4 py-3'>Sign in with Google</span>
         </button>
   )
 }
