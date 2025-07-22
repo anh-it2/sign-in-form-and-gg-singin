@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { redirect, useRouter } from 'next/navigation'
 import GoogleSignInBtn from './GoogleSignInBtn'
+import FacebookSignInBtn from './FacebookSignInBtn'
 const LoginForm = () => {
 
     const [email, setEmail] = useState('')
@@ -35,7 +36,10 @@ const LoginForm = () => {
   return (
     <div className='grid place-items-center h-screen'>
         <div className='shadow-lg p-5 rounded-lg border-t-4 border-green-400'>
-            <h1 className='text-xl font-bold my-4'>Login</h1>
+            <h1 className='text-2xl font-semibold text-center text-gray-800 mb-6'>
+                Welcome Back <br></br>
+                <span className='text-green-600'>Login to your account</span>
+                </h1>
 
             <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
                 <input onChange={(e) => {setEmail(e.target.value)}} type="text" placeholder='Email' />
@@ -46,11 +50,19 @@ const LoginForm = () => {
                 {error &&(
                     <div className='bg-red-500 text-white w-fit py-1 px-3 rounded-md'>{error}</div>
                 )}
-                <Link href='register' className='text-sm mt-3 text-right '>
-                    Don't have an account? <span className='underline text-green-600 font-medium'>Register</span>
-                </Link>
+                <div className='mt-6 text-center text-sm text-gray-600'>
+                    Don't have an account?{' '}
+                    <Link href='register' className='text-sm mt-3 text-right '>
+                        <span className='text-indigo-600 font-medium hover:underline hover:text-indigo-400
+                        transition-colors duration-200
+                        '>Register</span>
+                    </Link>
+                </div>
             </form>
-            <GoogleSignInBtn />
+            <div className='flex gap-4 mt-6'>
+                <GoogleSignInBtn />
+                <FacebookSignInBtn />
+            </div>
         </div>
     </div>
   )

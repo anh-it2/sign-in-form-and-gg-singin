@@ -56,7 +56,7 @@ const RegisterForm = () => {
   return (
     <div className='grid place-items-center h-screen'>
         <div className='shadow-lg p-5 rounded-lg border-t-4 border-green-400'>
-            <h1 className='text-xl font-bold my-4'>Register</h1>
+            <h1 className='text-2xl font-bold text-center text-green-600 mb-6 tracking-wide'>Register</h1>
 
             <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
                 <input onChange={(e) => {setName(e.target.value)}} type="text" placeholder='Full Name' />
@@ -70,9 +70,14 @@ const RegisterForm = () => {
                         <div className='bg-red-500 text-white w-fit py-1 px-3 rounded-md'>{error}</div>
                     )
                 }
-                <Link href='/' className='text-sm mt-3 text-right'>
-                    Already have an account? <span className='underline text-green-600 font-medium'>Login</span>
-                </Link>
+                <div className='mt-6 text-center text-sm text-gray-600'>
+                    Already have an account?{' '}
+                    <Link href='/' className='text-sm mt-3 text-right '>
+                        <span className='text-indigo-600 font-medium hover:underline hover:text-indigo-400
+                        transition-colors duration-200
+                        '>Login</span>
+                    </Link>
+                </div>
             </form>
         </div>
     </div>
