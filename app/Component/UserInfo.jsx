@@ -13,7 +13,7 @@ const UserInfo = () => {
             <div>
                 Email: <span className='font-bold'>{session?.user?.email}</span>
             </div>
-            <div className='mx-auto'>
+            <div className='mx-auto w-full'>
                 <button onClick={() => signOut()} className='bg-red-500 font-bold px-6 py-2 mt-3 text-white cursor-pointer '>Log Out</button>
             </div>
         </div>
