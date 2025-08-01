@@ -9,13 +9,13 @@ importScripts('https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-com
 // your app's Firebase config object.
 // https://firebase.google.com/docs/web/setup#config-object
 firebase.initializeApp({
-  apiKey: "AIzaSyAXCj-3sYnxSO0UPJw4IPSe6dhovDyrgJ4",
-  authDomain: "notify-7abec.firebaseapp.com",
-  projectId: "notify-7abec",
-  storageBucket: "notify-7abec.firebasestorage.app",
-  messagingSenderId: "613957802448",
-  appId: "1:613957802448:web:81256159c4070e351e41d5",
-  measurementId: "G-40G9N92V85"
+  apiKey: "AIzaSyB3kvu4UEEr7dDhMZ4Fla2p9e6I9lMuZBc",
+  authDomain: "fir-with-springboot-b7a67.firebaseapp.com",
+  projectId: "fir-with-springboot-b7a67",
+  storageBucket: "fir-with-springboot-b7a67.firebasestorage.app",
+  messagingSenderId: "681956099660",
+  appId: "1:681956099660:web:8cbbe2e3fc9e5c189656e9",
+  measurementId: "G-4FRM7780J4",
 });
 
 // Retrieve an instance of Firebase Messaging so that it can handle background
@@ -34,36 +34,30 @@ messaging.onBackgroundMessage(async (payload) => {
     image: payload.notification.image
   };
 
-  await fetch(`${self.location.origin}/api/notify/saveNotification`,{
-    method: 'POST',
-    headers:{
-      'Content-Type':'application/json'
-    },
-    body: JSON.stringify({
-      title: notificationTitle,
-      body: notificationOptions.body,
-      image: notificationOptions.image ?? null
-    })
-  })
+  const channel = new BroadcastChannel('notification_broadcast_channel')
+  channel.postMessage(payload)
+  self.registration.showNotification(notificationTitle, notificationOptions);
 
-  // self.registration.showNotification(notificationTitle, notificationOptions)
-  
+
 });
-// self.addEventListener('notificationclick',function(e) {
-//   const urlToOpen = new URL('/',self.location.origin)
-//   urlToOpen.searchParams.set('notify-title', e.notification.title)
-//   urlToOpen.searchParams.set('notify-body',e.notification.body)
-//   urlToOpen.searchParams.set('notify-image', e.notification.image)
-//   e.notification.close()
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
 
-//   e.waitUntil(
-//     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-//       for (const client of clientList) {
-//         if (client.url === urlToOpen.href && 'focus' in client) {
-//           return client.focus();
-//         }
-//       }
-//       return clients.openWindow(urlToOpen.href);
-//     })
-//   );
-// })
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      console.log("Client list:");
+      for (const client of clientList) {
+        console.log(" -", client.url);
+        if (client.url.startsWith(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      if (self.clients.openWindow) {
+        return self.clients.openWindow('/');
+      }
+    })
+  );
+});
+
+

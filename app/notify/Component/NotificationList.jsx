@@ -3,7 +3,7 @@
 import React from 'react'
 import NotificationCard from './NotificationCard'
 
-const NotificationList = ({ notify, setNotify, lastNotifyRef, setUnReadNotify, loading, router }) => {
+const NotificationList = ({ notify, setNotify, lastNotifyRef, setUnReadNotify, loading }) => {
   return (
     <div className='notificationList'>
       {notify.map((message, index) => {
@@ -16,16 +16,15 @@ const NotificationList = ({ notify, setNotify, lastNotifyRef, setUnReadNotify, l
                   lastNotifyRef(el)
                 }
               }}
-              setUnReadNotify={setUnReadNotify}
               onMarkAsRead={(id) => {
                 setNotify((prev) => {
                   return prev.map((item) =>{
-                     return item.id === id ? {...item,read: true}: item
+                     return item.id === id ? {...item,seen: true}: item
                   })
                 })
               }
               }
-              router={router}
+              setUnReadNotify={setUnReadNotify}
             />
         );
       })}

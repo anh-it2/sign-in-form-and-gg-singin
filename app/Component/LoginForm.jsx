@@ -13,25 +13,25 @@ const LoginForm = () => {
     const [error, setError] = useState('')
     const router = useRouter()
 
-    const handleSubmit = async (e) =>{
-        e.preventDefault();
+    // const handleSubmit = async (e) =>{
+    //     e.preventDefault();
 
-        try {
-            const res = await signIn('credentials',{
-                email,
-                password,
-                redirect: false
-            })
+    //     try {
+    //         const res = await signIn('credentials',{
+    //             email,
+    //             password,
+    //             redirect: false
+    //         })
 
-            if(res.error){
-                setError('Invalid Credentials')
-                return;
-            }
-            router.replace('dashboard')
-        } catch (error) {
-            console.log(error)
-        }
-    }
+    //         if(res.error){
+    //             setError('Invalid Credentials')
+    //             return;
+    //         }
+    //         router.replace('dashboard')
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
 
   return (
     <div className='grid place-items-center h-screen'>
@@ -41,7 +41,7 @@ const LoginForm = () => {
                 <span className='text-green-600'>Login to your account</span>
                 </h1>
 
-            <form className='flex flex-col gap-3' onSubmit={handleSubmit}>
+            <form className='flex flex-col gap-3' >
                 <input onChange={(e) => {setEmail(e.target.value)}} type="text" placeholder='Email' />
                 <input onChange={(e) => {setPassword(e.target.value)}} type="password" placeholder='Password' />
                 <button className='bg-green-600 text-white

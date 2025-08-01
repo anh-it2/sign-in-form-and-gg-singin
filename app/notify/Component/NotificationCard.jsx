@@ -1,32 +1,68 @@
 // NotificationCard.jsx
 'use client'
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import { LuUser } from 'react-icons/lu';
-import { markAsRead } from '../lib/notify/api';
+import qs from 'qs'
 import { useRouter } from 'next/navigation';
 
-const NotificationCard = forwardRef(({ message, setUnReadNotify, onMarkAsRead, router }, ref) => {
+const NotificationCard = forwardRef(({ message, setUnReadNotify, onMarkAsRead}, ref) => {
 
-  const handleClickNotify = async (id, link, e) =>{
+  const [imageError, setImageError] = useState(false)
+  const router = useRouter()
 
+  const handleClickNotify = async(id, e) =>{
     e.preventDefault()
 
-    console.log(link)
-    if(message.read === false){
-      setUnReadNotify((count) => count - 1)
-
-      await markAsRead(id)
-
+    if(message.seen === false){
+      setUnReadNotify((prev) => prev - 1)
+      await fetch(`https://notify-application-ynxd.onrender.com/notifications/seen/${id}`,{
+        method: 'PUT',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          seen: true
+        })
+      })
       onMarkAsRead(id)
     }
+
+    const query = qs.stringify({
+      title: message.title,
+      body: message.body,
+      imageUrl: message.imageUrl,
+      sentAt: message.sentAt
+    },{encode:true})
+
+    const link = `/tasks/${id}?${query}`
+    console.log(link)
     router.push(link)
+  }
+
+function isValidHttpUrl(str) {
+  try {
+    const url = new URL(str);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch (_) {
+    return false;
+  }
 }
+const showImage = isValidHttpUrl(message.imageUrl) && !imageError;
 
   return (
-      <div className={`notificationCard ${message.read ? 'read' : 'unread'}`} ref={ref} onClick={(e) => handleClickNotify(message.id, message.link,e)}>
+      <div className={`notificationCard ${message.seen ? 'read' : 'unread'}`} ref={ref} onClick={(e) => handleClickNotify(message.id, e)}>
         <div className='circle'></div>
-        {message.image ? <img src={message.image} alt="notification" className='image'/> : <LuUser className='icon-user'/>}
+        {showImage ? (
+        <img
+          src={message.imageUrl}
+          alt="notification"
+          className='image'
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <LuUser className='icon-user' />
+      )}
         <div className='infor'>
           <div className="title">{message.title}</div>
           <div className="body">{message.body}</div>

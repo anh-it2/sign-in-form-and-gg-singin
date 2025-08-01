@@ -26,7 +26,8 @@ export default function RootLayout({ children }) {
       <body
         className={`${inter.className} ${geistMono.variable} font-sans`}
       >
-        <AuthProvider >{children}</AuthProvider>
+        {/* <AuthProvider >{children}</AuthProvider> */}
+        {children}
       </body>
     </html>
   );

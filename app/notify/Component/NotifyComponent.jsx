@@ -4,179 +4,191 @@
 import{getMessaging, getToken, onMessage} from 'firebase/messaging'
 import { useCallback, useEffect, useRef, useState } from "react";
 import NotificationList from "./NotificationList";
-import { collection, onSnapshot } from "firebase/firestore";
 import { MdNotificationsActive } from "react-icons/md";
 import '../notify.css'
-import { fetNotification, saveNotification } from '../lib/notify/api';
-import { db,app } from '../lib/notify/firebase';
-import { useRouter } from 'next/navigation';
+import { app } from '../lib/notify/firebase';
+import { baseNotifyUrl } from '@/config/baseUrl';
 
 
-export default function Home() {
+  export default function Home() {
 
-  const observer = useRef()
-  const scrollContainer = useRef()
-  const countRef = useRef(-1)
-  const router = useRouter()
+    const observer = useRef()
+    const scrollContainer = useRef()
+    const idRef = useRef(0)
 
-  const [notify, setNotify] = useState([])
-  const [lastDoc, setLastDoc] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const [show, setShow] = useState(false)
-  const [unReadNotify, setUnReadNotify] = useState(0)
+    const [notify, setNotify] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [hasMore, setHasMore] = useState(true)
+    const [show, setShow] = useState(false)
+    const [unReadNotify, setUnReadNotify] = useState(0)
+    const [pages, setPages] = useState(0)
+    const [id, setId] = useState(0)
 
-  const fetchData = async (lastDoc) => {
+    const fetchData = async (token) => {
 
-    if(!hasMore || loading) return 
+      if(!hasMore || loading) return 
 
-    setLoading(true)
+      setLoading(true)
 
-    // const params = new URLSearchParams({
-    //   page: 1,
-    //   size: 10,
-    //   sortBy: 'createdAt',
-    //   sortDirection: 'DESC'
-    // }).toString()
-
-    // console.log(params)
-    // const res = await fetch(`https://notify-app-cj9d.onrender.com/notifications?${params}`)
-
-    const res = await fetNotification(lastDoc)
-    const json = await res.json()
-    const data = json.data
-    console.log(json)
-
-    if(!json.hasMore){
-      setHasMore(false)
-    }else{
-      setLastDoc(json.lastDoc)
-    }
-    if(lastDoc === null){
-       setNotify(data)
-    }else{
-       setNotify((prev) => [...prev,...data])
+        const params = new URLSearchParams({
+          page: pages,
+          size: 10,
+          sortBy: 'sentAt',
+          sortDirection: 'DESC'
+        }).toString()
+  
+        const  res = await fetch(`${baseNotifyUrl}/notifications/device/${token}?${params}`)
+        const json = await res.json()
+        const data = json.data.content
+        if(data.length < 10){
+          setHasMore(false)
+        }
+        return data
     }
 
-    setUnReadNotify(json.unReadNoti)
+    const fetchAll = async (token) =>{
+      if(loading) return
 
-    console.log(notify)
-    setLoading(false)
-  }
+      const res = await fetch(`${baseNotifyUrl}/notifications/device/${token}?page=0&size=1000`)
+      const json = await res.json()
+      if(json.length !== 0) {
 
-  useEffect(() => {
-    // fetchData(null)
-    const unSubcribe = onSnapshot(collection(db,'notifications'),async (snapshot) => {
-      // setLastDoc(null)
-      // setHasMore(true)
-      const newCount = snapshot.size;
-      if(newCount !== countRef.current ){
+        try {
+          const filtered = json.data.content.filter(item => item.sentAt !== null)
 
-        countRef.current = newCount
-        await fetchData(null)
+          if(filtered.length > 0){
+          const x = json.data.content[0].id
+          setId(x)
+          idRef.current = x
+        }
+        return filtered
+        } catch (error) {
+          alert("error" + error.message)
+        }
       }
-    })
-    return () => unSubcribe()
-  },[])
+    }
 
-  useEffect(() => {
-    const messaging = getMessaging(app)
+    useEffect(() => {
+      const unRead = async () => {
 
-    generateToken(messaging)
-    onMessage(messaging,async (payload) => {
-      console.log(payload)
+        const messaging = getMessaging(app)
+        const token = await generateToken(messaging)
 
-      const {title, body} = payload.notification
-      const image = payload.notification.image ?? null
+        const data = await fetchAll(token)
+        console.log(data)
 
-      const data = {title, body, image}
-
-      saveNotification(data)
-
-      // setNotify((prev) => [data, ...prev])
-
-    })
+        let x = 0
+        data.map((item) => {
+        if(item.seen === false) x++
+      })
+      setUnReadNotify(x)
+      }
+      unRead()
     },[])
 
-//     useEffect(() => {
-//   // Khi mở web do click từ thông báo (từ background hoặc web bị tắt)
-//   const handleRouteChange = (url) => {
-//     const params = new URLSearchParams(window.location.search);
-//     const title = params.get("notify-title");
-//     const body = params.get("notify-body");
-//     const image = params.get("notify-image");
+    useEffect(() => {
+    
+    const channel = new BroadcastChannel('notification_broadcast_channel');
+    channel.onmessage = (event) => {
+      const {title, body} = event.data.notification
+      const imageUrl = event.data.notification.image
+      const seen = false
+      const data = {title, body, imageUrl, seen}
+      data.id = idRef.current + 1
+      setNotify((prev) => [data, ...prev])
+      setUnReadNotify((prev) => prev + 1)
+    };
+  return () => {channel.close()}
+}, []);
 
-//     if (title && body) {
-//       const data = { title, body, image };
-//       console.log(data);
-//       saveNotification(data);
-//       setNotify((prev) => [data, ...prev]);
-//       router.replace("/", undefined, { shallow: true });
-//     }
-//   };
+    useEffect(() =>{
 
-//   if (router && router.events && typeof router.events.on === "function") {
-//     router.events.on("routeChangeComplete", handleRouteChange);
-//   }
+      const messaging = getMessaging(app)
 
-//   return () => {
-//     if (router && router.events && typeof router.events.off === "function") {
-//       router.events.off("routeChangeComplete", handleRouteChange);
-//     }
-//   };
-// }, [router]);
+      const fetch = async ()=>{
 
-    const lastNotifyRef = useCallback(node => {
-      if(loading || !node ||!(node instanceof Element)) return 
-      if(observer.current) observer.current.disconnect()
+        if(loading || !hasMore) return
+        setLoading(true)
 
-      observer.current = new IntersectionObserver((entries) => {
-        if(entries[0].isIntersecting && hasMore){
-          fetchData(lastDoc)
-        }
-      },{
-        root: scrollContainer.current,
-        rootMargin: '0px',
-        threshold: 1.0
+        const token = await generateToken(messaging)
+        const data = await fetchData(token)
+        const mapped = data
+        .map((item) => ({
+          title: item.title,
+          body: item.body,
+          imageUrl: item.imageUrl,
+          sentAt: item.sentAt,
+          seen: item.seen,
+          id: item.id
+        }))
+        setNotify((prev) => {
+          const existingIds = new Set(prev.map(item => item.id));
+          const uniqueNew = mapped.filter(item => !existingIds.has(item.id));
+          return [...prev, ...uniqueNew];
+        });
+        setLoading(false)
+      }
+      fetch()
+    },[pages])
+
+    useEffect(() => {
+
+      const messaging = getMessaging(app)
+      const unsubcribe = onMessage(messaging,async (payload) => {
+
+        const {title, body} = payload.notification
+        const imageUrl = payload.notification.image
+        const seen = false
+        const data = {title, body, imageUrl, seen}
+        data.id = idRef.current + 1
+        setNotify((prev) => [data,...prev])
+        setUnReadNotify((prev) => prev + 1)
       })
+      return () => unsubcribe()
+      },[])
 
-      observer.current.observe(node)
-    },[loading, hasMore, lastDoc])
+      const lastNotifyRef = useCallback(node => {
+        if(loading || !node ||!(node instanceof Element)) return 
+        if(observer.current) observer.current.disconnect()
 
-  return (
-    <>
-      <button onClick={() => setShow(!show)} className="notify-btn">
-        <div className="icon-wrapper">
-          <MdNotificationsActive className="icon"/>
-          {!show && <span className="badge ">{unReadNotify > 99? '99+' : unReadNotify}</span>}
-        </div>
-        {show && notify.length === 0 && <div className="spinner end"></div>}
-      </button>
+        observer.current = new IntersectionObserver((entries) => {
+          console.log(entries)
+          if(entries[0].isIntersecting && hasMore){
+            setPages((pages) => pages + 1)
+          }
+        },{
+          root: scrollContainer.current,
+          rootMargin: '0px',
+          threshold: 1.0
+        })
 
-      {show && notify.length > 0 && <NotificationList notify={notify} setNotify={setNotify} router={router}
-      lastNotifyRef={lastNotifyRef} ref={scrollContainer} setUnReadNotify={setUnReadNotify} loading={loading}/>}
-    </>
-  );
-}
+        observer.current.observe(node)
+      },[loading, hasMore])
 
-export const generateToken = async (messaging) => {
-    const permission = await Notification.requestPermission()
+    return (
+      <>
+        <button onClick={() => setShow(!show)} className="notify-btn">
+          <div className="icon-wrapper">
+            <MdNotificationsActive className="icon"/>
+            {!show && unReadNotify >0 && <span className="badge ">{unReadNotify > 99? '99+' : unReadNotify}</span>}
+          </div>
+          {show && notify.length === 0 && <div className="spinner end"></div>}
+        </button>
 
-    if(permission ==="granted"){
-      const token = await getToken(messaging,{
-        vapidKey:process.env.NEXT_PUBLIC_FIREBASE_VAPIDKEY
-      })
-      console.log(token)
-      return token
-
-      // await fetch(`https://notify-app-cj9d.onrender.com/notifications/device`,{
-      //   method:'POST',
-      //   headers:{
-      //     'Content-Type':'application/json'
-      //   },
-      //   body: JSON.stringify({
-      //     deviceToken: token
-      //   })
-      // })
-    }
+        {show && notify.length > 0 && <NotificationList notify={notify} setNotify={setNotify}
+        lastNotifyRef={lastNotifyRef} ref={scrollContainer} setUnReadNotify={setUnReadNotify} loading={loading}/>}
+      </>
+    );
   }
+
+  export const generateToken = async (messaging) => {
+      const permission = await Notification.requestPermission()
+
+      if(permission ==="granted"){
+        const token = await getToken(messaging,{
+          vapidKey:process.env.NEXT_PUBLIC_FIREBASE_VAPIDKEY
+        })
+        console.log(token)
+        return token
+      }
+    }

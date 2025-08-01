@@ -1,24 +1,45 @@
-'use client'
+"use client";
 
-import React from 'react'
-import { signOut, useSession } from 'next-auth/react'
-const UserInfo = () => {
-    const {data:session} = useSession()
+import  { baseSignInUrl } from "@/config/baseUrl";
+import React, { useEffect, useState } from "react";
+
+export default function UserInfo() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+
+    console.log("Retrieved JWT token:", token);
+    if (!token) {
+      setError("No JWT token found in localStorage.");
+      return;
+    }
+
+    const fetchData = async () =>{
+      const data = await fetch(`${baseSignInUrl}/internal/details`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+      const json = await data.json()
+      console.log(json)
+    }
+    fetchData()
+
+    
+  }, []);
+
   return (
-    <div className='grid place-items-center h-screen'>
-        <div className='shadow-lg p-8 bg-zinc-300/10 flex flex-col gap-2 my-6'>
-            <div>
-                Name: <span className='font-bold'>{session?.user?.name}</span>
-            </div>
-            <div>
-                Email: <span className='font-bold'>{session?.user?.email}</span>
-            </div>
-            <div className='mx-auto w-full'>
-                <button onClick={() => signOut()} className='bg-red-500 font-bold px-6 py-2 mt-3 text-white cursor-pointer '>Log Out</button>
-            </div>
-        </div>
+    <div>
+      <h2>User Info</h2>
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
+      {data ? (
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      ) : !error ? (
+        <p>Loading...</p>
+      ) : null}
     </div>
-  )
+  );
 }
-
-export default UserInfo

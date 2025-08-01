@@ -1,14 +1,37 @@
-import { getServerSession } from "next-auth";
+'use client'
+import { useEffect } from "react";
 import LoginForm from "./Component/LoginForm";
-import { authOptions } from "./api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
 
-export default async function Home() {
+import { useRouter } from "next/navigation";
 
-  // const session = await getServerSession(authOptions)
-  // if(session) redirect('/dashboard')
+export default function Home() {
+
+  const router = useRouter()
+
+  useEffect(() =>{
+    const token = localStorage.getItem('jwtToken')
+
+    if(isTokenValid(token)){
+      router.push('/dashboard')
+    }
+  },[])
+
+  const isTokenValid = (token) => {
+    if(!token) return false
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      const now = Math.floor(Date.now() / 1000)
+      return payload.exp && payload.exp > now
+    } catch (error) {
+      return false
+    }
+  }
+
   return (
     <main>
+      {/* <NotifyComponent />
+      <SendNotifyForm /> */}
       <LoginForm />
     </main>
   );
