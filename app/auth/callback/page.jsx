@@ -7,14 +7,9 @@ const CallbackPage = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("jwtToken");
 
-    if (token) {
-      localStorage.setItem("jwtToken", token);
-      router.replace('/dashboard')
-    } else {
-      console.error("JWT token not found in URL");
-    }
+    router.replace("/dashboard");
+
   }, [router]);
 
   return <div>Processing login...</div>;
