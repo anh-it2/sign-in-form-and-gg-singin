@@ -1,4 +1,4 @@
-export const baseSignInUrl = "https://ec4c61c6afa6.ngrok-free.app"
+export const baseSignInUrl = "https://oauth2springboot.onrender.com"
 
 export const baseNotifyUrl = 'https://notify-application-ynxd.onrender.com'
 

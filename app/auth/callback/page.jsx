@@ -11,7 +11,7 @@ const CallbackPage = () => {
 
     if (token) {
       localStorage.setItem("jwtToken", token);
-      router.replace("/dashboard"); // redirect to your main app
+      router.replace('/dashboard')
     } else {
       console.error("JWT token not found in URL");
     }

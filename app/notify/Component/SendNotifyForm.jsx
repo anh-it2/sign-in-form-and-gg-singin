@@ -7,7 +7,7 @@ import { generateToken } from './NotifyComponent'
 import '../notify.css'
 import { baseNotifyUrl } from '@/config/baseUrl'
 
-const SendNotifyForm = () => {
+const SendNotifyForm = ({setSendNotify}) => {
 
     const [form, setForm] = useState({
         title: '',
@@ -72,6 +72,7 @@ const SendNotifyForm = () => {
                     })
                 })
         }
+        setSendNotify((prev) => !prev)
     }
 
     useEffect(() => {
