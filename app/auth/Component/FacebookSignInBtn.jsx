@@ -1,9 +1,9 @@
 'use client'
 import React from 'react'
 import Image from 'next/image'
-import { baseSignInUrl } from '@/config/baseUrl'
+import { baseSignInUrl } from '../config/baseUrl'
 
-// import { signIn } from 'next-auth/react'
+
 const FacebookSignInBtn = () => {
   return (
         <button 

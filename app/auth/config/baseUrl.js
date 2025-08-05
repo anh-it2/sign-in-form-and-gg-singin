@@ -1,0 +1,1 @@
+export const baseSignInUrl = "https://oauth2springboot.onrender.com"

@@ -1,7 +1,10 @@
+'use client'
 import React from 'react'
-import UserInfo from '../Component/UserInfo'
-import NotifyComponent from '../notify/Component/NotifyComponent'
-const page = () => {
+
+import NotifyComponent from '@/app/notify/Component/NotifyComponent'
+import UserInfo from '../auth/Component/UserInfo'
+
+const Page = () => {
   return (
     <>
       <NotifyComponent />
@@ -11,4 +14,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

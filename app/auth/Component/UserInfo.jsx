@@ -62,8 +62,10 @@
 
 "use client";
 
-import { baseSignInUrl } from "@/config/baseUrl";
+
 import React, { useEffect, useState } from "react";
+import '../auth.css'
+import { baseSignInUrl } from "../config/baseUrl";
 
 export default function UserInfo() {
   const [data, setData] = useState(null);
@@ -79,11 +81,12 @@ export default function UserInfo() {
 
         if (!response.ok) {
           const errorText = await response.text();
+          console.log(errorText)
           setError(`Error ${response.status}: ${errorText}`);
           return;
         }
 
-        const json = await response.json();
+        const json = await response.text();
         setData(json);
       } catch (err) {
         setError(`Fetch failed: ${err.message}`);

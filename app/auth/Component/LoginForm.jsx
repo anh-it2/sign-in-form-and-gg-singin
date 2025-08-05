@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { redirect, useRouter } from 'next/navigation'
+import '../auth.css'
+import {  useRouter } from 'next/navigation'
 import GoogleSignInBtn from './GoogleSignInBtn'
 import FacebookSignInBtn from './FacebookSignInBtn'
 const LoginForm = () => {
@@ -12,26 +12,6 @@ const LoginForm = () => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const router = useRouter()
-
-    // const handleSubmit = async (e) =>{
-    //     e.preventDefault();
-
-    //     try {
-    //         const res = await signIn('credentials',{
-    //             email,
-    //             password,
-    //             redirect: false
-    //         })
-
-    //         if(res.error){
-    //             setError('Invalid Credentials')
-    //             return;
-    //         }
-    //         router.replace('dashboard')
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
 
   return (
     <div className='grid place-items-center h-screen'>

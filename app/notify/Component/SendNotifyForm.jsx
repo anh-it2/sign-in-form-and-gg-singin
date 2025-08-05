@@ -5,7 +5,8 @@ import React, { useEffect, useState } from 'react'
 import { app } from '../lib/notify/firebase'
 import { generateToken } from './NotifyComponent'
 import '../notify.css'
-import { baseNotifyUrl } from '@/config/baseUrl'
+import { baseNotifyUrl } from '../config/baseUrl'
+
 
 const SendNotifyForm = ({setSendNotify}) => {
 

@@ -7,7 +7,8 @@ import NotificationList from "./NotificationList";
 import { MdNotificationsActive } from "react-icons/md";
 import '../notify.css'
 import { app } from '../lib/notify/firebase';
-import { baseNotifyUrl } from '@/config/baseUrl';
+import { baseNotifyUrl } from '../config/baseUrl';
+
 
 
   export default function Home() {

@@ -1,8 +1,9 @@
 'use client'
 import { useEffect } from "react";
-import LoginForm from "./Component/LoginForm";
+
 
 import { useRouter } from "next/navigation";
+import LoginForm from "./auth/Component/LoginForm";
 
 export default function Home() {
 
@@ -30,8 +31,6 @@ export default function Home() {
 
   return (
     <main>
-      {/* <NotifyComponent />
-      <SendNotifyForm /> */}
       <LoginForm />
     </main>
   );

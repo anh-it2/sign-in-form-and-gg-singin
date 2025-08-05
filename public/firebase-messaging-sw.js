@@ -31,12 +31,12 @@ messaging.onBackgroundMessage(async (payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    image: payload.notification.image
+    image: payload.notification.image,
   };
 
   const channel = new BroadcastChannel('notification_broadcast_channel')
   channel.postMessage(payload)
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  // self.registration.showNotification(notificationTitle, notificationOptions);
 
 
 });
@@ -44,19 +44,29 @@ self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
   event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      console.log("Client list:");
-      for (const client of clientList) {
-        console.log(" -", client.url);
-        if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-          return client.focus();
-        }
-      }
 
-      if (self.clients.openWindow) {
-        return self.clients.openWindow('/');
-      }
-    })
+    Promise.all([
+
+      self.registration.getNotifications().then(notifications =>{
+        notifications.forEach(element => {
+          element.close()
+        });
+      }),
+        
+      self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        console.log("Client list:");
+        for (const client of clientList) {
+          console.log(" -", self.location.origin);
+          if (client.url.startsWith(self.location.origin)) {
+              return client.focus();
+          }
+        }
+  
+          return self.clients.openWindow('/');
+        
+      })
+    ])
+
   );
 });
 

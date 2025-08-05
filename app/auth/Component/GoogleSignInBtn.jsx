@@ -1,7 +1,8 @@
 'use client'
 import React from 'react'
 import Image from 'next/image'
-import  { baseSignInUrl } from '@/config/baseUrl'
+import { baseSignInUrl } from '../config/baseUrl'
+
 const GoogleSignInBtn = () => {
   return (
         <button 
