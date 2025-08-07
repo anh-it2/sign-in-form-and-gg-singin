@@ -1,10 +1,10 @@
-// NotificationCard.jsx
 'use client'
 
 import React, { forwardRef, useState } from 'react';
 import { LuUser } from 'react-icons/lu';
 import qs from 'qs'
 import { useRouter } from 'next/navigation';
+import { isValidHttpUrl } from '../utils/isValidHttpUrl';
 
 const NotificationCard = forwardRef(({ message, setUnReadNotify, onMarkAsRead}, ref) => {
 
@@ -36,18 +36,9 @@ const NotificationCard = forwardRef(({ message, setUnReadNotify, onMarkAsRead}, 
     },{encode:true})
 
     const link = `/tasks/${id}?${query}`
-    console.log(link)
     router.push(link)
   }
 
-function isValidHttpUrl(str) {
-  try {
-    const url = new URL(str);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch (_) {
-    return false;
-  }
-}
 const showImage = isValidHttpUrl(message.imageUrl) && !imageError;
 
   return (

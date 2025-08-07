@@ -66,10 +66,12 @@
 import React, { useEffect, useState } from "react";
 import '../auth.css'
 import { baseSignInUrl } from "../config/baseUrl";
+import SendNotifyForm from "@/app/notify/Component/SendNotifyForm";
 
 export default function UserInfo() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
+  const [sendNotify, setSendNotify] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +88,8 @@ export default function UserInfo() {
           return;
         }
 
-        const json = await response.text();
+        const json = await response.json();
+        console.log(json)
         setData(json);
       } catch (err) {
         setError(`Fetch failed: ${err.message}`);
@@ -97,13 +100,28 @@ export default function UserInfo() {
   }, []);
 
   return (
-      <div>
-        <h2>User Info</h2>
-        {error && <p style={{ color: "red" }}>Error: {error}</p>}
-        {data ? (<pre>{JSON.stringify(data, null, 2)}</pre>
-        ) : !error ? (
-            <p>Loading...</p>
-        ) : null}
+    <>
+      {!sendNotify? <div className="home">
+        <div className="user-infor">
+          <div className="form-user-title">
+            <h2 className="user-infor-title">User Info</h2>
+            <button className="log-out" onClick={() => window.location.href='https://oauth2springboot.onrender.com/logout'}>Log Out</button>
+          </div>
+          {error && <p style={{ color: "red" }}>Error: {error}</p>}
+          {data ? (
+            <div className="user-infor-details">
+              <p className="user-name"><span>Email:</span> {data.email}</p>
+              <p className="user-email"><span>Name:</span> {data.name}</p>
+            </div>
+          ) : !error ? (
+            <p className="loading"></p>
+          ) : null}
+          <button onClick={() =>{setSendNotify((prev) => !prev)}} className="send-notify-btn">Send notify to someone</button>
+        </div>
       </div>
+      :
+      <SendNotifyForm setSendNotify={setSendNotify}/>
+      }
+    </>
   );
 }

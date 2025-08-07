@@ -36,7 +36,7 @@ messaging.onBackgroundMessage(async (payload) => {
 
   const channel = new BroadcastChannel('notification_broadcast_channel')
   channel.postMessage(payload)
-  // self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 
 
 });

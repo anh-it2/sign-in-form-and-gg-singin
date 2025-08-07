@@ -4,7 +4,7 @@
   padding: 0
 }
 .notificationList{
-  width: 400px;
+  width: 300px;
   height: 250px;
   position: absolute;
   top:60px;
@@ -17,6 +17,7 @@
   scrollbar-width: 6px;
   scrollbar-color: #ccc transparent;
   scroll-behavior: smooth;
+  z-index: 1;
 }
 .notificationList:focus{
   outline: none;
@@ -185,6 +186,7 @@ form{
     padding: 10px;
     font-size: 14px;
     cursor: pointer;
+    height: 60px;
 }
 .btn-send-notify:hover{
     background-color: #00bcd4;
@@ -196,4 +198,7 @@ form{
     background-color: #f0faff;
     box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
     transition: all 0.25s ease-in-out;
+}
+.send{
+  font-size: 18px;
 }
