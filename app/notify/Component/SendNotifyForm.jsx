@@ -7,6 +7,7 @@ import { app } from '../lib/notify/firebase'
 import '../notify.css'
 import { baseNotifyUrl } from '../config/baseUrl'
 import { generateToken } from '../utils/generateToken'
+import isValidEmail from '../utils/isValidEmail'
 
 
 const SendNotifyForm = ({setSendNotify}) => {
@@ -25,12 +26,6 @@ const SendNotifyForm = ({setSendNotify}) => {
 
     const handleChange = (e) => {
         setForm({...form, [e.target.name]: e.target.value})
-    }
-
-    const isValidEmail = (email) => {
-        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!regex.test(email.trim())) return false
-        else return true
     }
 
     const sendNotify = async (token, e) => {
