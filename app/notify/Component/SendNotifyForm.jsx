@@ -51,7 +51,6 @@ const SendNotifyForm = ({setSendNotify}) => {
                     imageUrl: form.imageUrl,
                     deviceToken: token,
                     text: form.text
-                    // sentAt: new Date().toISOString()
                 })
             })
             } else{
@@ -65,7 +64,6 @@ const SendNotifyForm = ({setSendNotify}) => {
                         body: form.body,
                         imageUrl: form.imageUrl,
                         deviceToken: token
-                        // sentAt: new Date().toISOString()
                     })
                 })
         }
